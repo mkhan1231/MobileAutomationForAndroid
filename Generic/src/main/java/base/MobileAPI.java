@@ -34,9 +34,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-/**
- * Created by mrahman on 5/19/17.
- */
+
 public class MobileAPI {
 
     public static ExtentReports extent;
@@ -46,7 +44,6 @@ public class MobileAPI {
         ExtentManager.setOutputDirectory(context);
         extent = ExtentManager.getInstance();
     }
-
     @BeforeMethod
     public void startExtent(Method method) {
         String className = convertCamelCase(method.getDeclaringClass().getSimpleName());
@@ -55,14 +52,12 @@ public class MobileAPI {
         ExtentTestManager.startTest( methodName );
         ExtentTestManager.getTest().assignCategory(className);
     }
-
     protected String getStackTrace(Throwable t) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         t.printStackTrace(pw);
         return sw.toString();
     }
-
     @AfterMethod
     public void afterEachTestMethod(ITestResult result) {
 
@@ -86,7 +81,6 @@ public class MobileAPI {
         ad.removeApp("nyp.apk");
         ad.quit();
     }
-
     @AfterSuite
     public void generateReport() {
         extent.close();
@@ -127,7 +121,6 @@ public class MobileAPI {
                     ad = setUpiOsEnv(deviceName,version);
                 }
             }
-
         }else if(OS.equalsIgnoreCase("Android")){
             if(appType.contains("Phone")){
                 appDirectory = new File("src/app");
@@ -138,7 +131,6 @@ public class MobileAPI {
 
                     ad =setUpAndroidEnv(deviceName,version);
                 }
-
             }else if(OS.equalsIgnoreCase("Tablets")){
                 if(deviceType.equalsIgnoreCase("RealDevice")){
                     ad = setUpAndroidEnv(deviceName,version);
@@ -148,7 +140,6 @@ public class MobileAPI {
             }
         }
     }
-
     public AppiumDriver setUpiOsEnv(String deviceName,String version)throws IOException,InterruptedException{
         DesiredCapabilities cap = new DesiredCapabilities();
         cap.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
@@ -159,7 +150,6 @@ public class MobileAPI {
         ad.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         return ad;
-
     }
     public AppiumDriver setUpAndroidEnv(String deviceName,String version)throws IOException,InterruptedException{
         DesiredCapabilities cap = new DesiredCapabilities();
@@ -171,19 +161,14 @@ public class MobileAPI {
         ad.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         return ad;
-
     }
-
     protected static void skip() throws SkipException {
         throw new SkipException("Skipping this test");
     }
-
     private String convertCamelCase(String words){
         return StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(words), ' ');
     }
-
     private static final List< Function<String, By>> resolvers = Arrays.asList(By::id, By::className, By::xpath);
-
     public WebElement locateElement(AppiumDriver ad, String locator) {
         WebElement el = null;
 
@@ -202,27 +187,20 @@ public class MobileAPI {
         }
         return el;
     }
-
     public void clickOnElement(AppiumDriver ad, String locator) {
         locateElement(ad, locator).click();
-
     }
-
     public void enterValueOnElement(AppiumDriver ad, String locator, String value) {
         locateElement(ad, locator).sendKeys(value);
-
     }
-
     public void swipeOnElement(AppiumDriver ad, String locator) {
         locateElement(ad, locator);
-
     }
 
     public void waitUntilPresence(AppiumDriver ad, String locator) {
         WebDriverWait wait = new WebDriverWait(ad, 45);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.id(locator)));
     }
-
     public boolean validateClickable(AppiumDriver ad, WebElement element) {
         try {
             WebDriverWait wait = new WebDriverWait(ad, 10);
@@ -232,18 +210,14 @@ public class MobileAPI {
         }
         return true;
     }
-
-
     public void waitUntilClickable(AppiumDriver ad, WebElement webElement) {
         WebDriverWait wait = new WebDriverWait(ad, 45);
         //wait.until(ExpectedConditions.elementToBeClickable(By.id(locator)));
     }
-
     public void clickWhenClickable(AppiumDriver ad, String locator) {
         WebDriverWait wait = new WebDriverWait(ad, 45);
         wait.until(ExpectedConditions.elementToBeClickable(By.id(locator))).click();
     }
-
     public void clickOnElementWithText(List<WebElement> elementList, String targetText) {
         for (WebElement element : elementList) {
             if (element.getText().contains(targetText)) {
@@ -255,7 +229,6 @@ public class MobileAPI {
             }
         }
     }
-
     public void clearField(AppiumDriver ad, String locator) {
         locateElement(ad, locator).clear();
     }
@@ -264,18 +237,15 @@ public class MobileAPI {
         //new TouchAction((MobileDriver) ad).tap(By.xpath(locator)).perform();
         ad.tap(1, ad.findElement(MobileBy.xpath(locator)), 200);
     }
-
     public void sleep(int sec) {
         try {
             Thread.sleep(1000 * sec);
         } catch (InterruptedException e) {
         }
     }
-
     public void type(AppiumDriver ad, String locator, String value) {
         locateElement(ad, locator).sendKeys(value);
     }
-
     public List<String> getTexts(List<WebElement> elements) {
         List<String> text = new ArrayList<String>();
         for (WebElement element : elements) {
@@ -283,17 +253,14 @@ public class MobileAPI {
         }
         return text;
     }
-
     public void touch(AppiumDriver ad, WebElement locator) {
         TouchAction touchAction = new TouchAction(ad);
         touchAction.moveTo(locator);
     }
-
     private Dimension getDemensions(AppiumDriver ad) {
         Dimension size = ad.manage().window().getSize();
         return size;
     }
-
     private HashMap<String, Integer> setXandY(AppiumDriver ad, Double startX, Double endX, Double startY, Double endY) {
         HashMap<String, Integer> dimensions = new HashMap<String, Integer>();
         Dimension size = getDemensions(ad);
@@ -303,7 +270,6 @@ public class MobileAPI {
         dimensions.put("endY", (int) (size.height / endY)); // 2
         return dimensions;
     }
-
     public void swipeRightToLeft(AppiumDriver ad, Double startX, Double endX, Double startY, Double endY) {
         HashMap<String, Integer> d = setXandY(ad, startX, endX, startY, endY);
         ad.swipe(d.get("startX"), d.get("startY"), d.get("endX"), d.get("startY"), 3000);
@@ -313,7 +279,6 @@ public class MobileAPI {
         HashMap<String, Integer> d = setXandY(ad, startX, endX, startY, endY);
         ad.swipe(d.get("endX"), d.get("startY"), d.get("startX"), d.get("startY"), 3000);
     }
-
 
     public void swipeUp(AppiumDriver ad, Double startX, Double endX, Double startY, Double endY) {
         HashMap<String, Integer> d = setXandY(ad, startX, endX, startY, endY);
@@ -325,11 +290,9 @@ public class MobileAPI {
         HashMap<String, Integer> d = setXandY(ad, startX, endX, startY, endY);
         ad.swipe(d.get("startX"), d.get("startY"), d.get("endX"), d.get("endT"), 3000);
     }
-
     public String getText(AppiumDriver ad, String locator) {
         return locateElement(ad, locator).getText();
     }
-
     public void sleepFor(int time) {
         try {
             Thread.sleep(1000 * time);
@@ -337,7 +300,6 @@ public class MobileAPI {
             e.printStackTrace();
         }
     }
-
     public void tapOn(AppiumDriver ad, String element) {
         new TouchAction((MobileDriver) ad.findElement(By.xpath(element)));
     }
@@ -355,7 +317,6 @@ public class MobileAPI {
             e.printStackTrace();
         }
     }
-
     public void captureScreenShot(ITestResult result, String status) {
         String destDir = "";
         String passfailMethod = result.getMethod().getRealClass().getSimpleName() + "." + result.getMethod().getMethodName();
@@ -375,7 +336,6 @@ public class MobileAPI {
             e.printStackTrace();
         }
     }
-
     public void swipeUpNDown(AppiumDriver ad) {
         //Get the size of screen.
         Dimension size = ad.manage().window().getSize();
@@ -422,10 +382,4 @@ public class MobileAPI {
         MobileElement we = (MobileElement) driver.findElementByXPath(text);
         driver.scrollTo(we.getText());
     }
-    /*public static MobileElement w(WebElement element) {
-        return new MobileElement((RemoteWebElement) element, ad);
-    }
-    public static MobileElement element(WebElement webElement) {
-        return w(webElement);
-    }*/
 }
